@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 st.set_page_config(
     layout="wide",
@@ -22,11 +24,22 @@ with st.spinner('Processing flight Data.....'):
     df= load_data('DelayedFlightsnew.xlsx')
     
 st.image("https://wallpapers.com/images/hd/sunset-silhouette-airplane-brh2gmlmjhnj74dv.jpg", use_column_width=True)
-st.title("Flight Data Analysis App")
+st.title("Flight Data Analysis")
 
 # Flights Frequency
-# Busiest airport in terms of Flights arrival 
 
-buzArr = df.groupby(['Origin'])['Origin'].count()
-origin=(df.Origin ).value_counts().head(25).plot(kind='bar')
+# Busiest airport in terms of Flights arrival 
+(df.Origin ).value_counts().head(25).plot(kind='bar')
+
+# Busiest airport in terms of Flights departure
+(df.Dest ).value_counts().head(25).plot(kind='bar')
+
+# Popular Routes
+df['routes'] = df.Origin+' <-> '+df.Dest
+def update_routes(path):
+    data =path.split(' <-> ')
+    data.sort()
+    return " <-> ".join(data)    
+df.routes.apply(update_routes).value_counts().head(25).plot(kind='bar')
+
 
