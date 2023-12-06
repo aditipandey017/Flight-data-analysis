@@ -1,3 +1,4 @@
+#import the libraries
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -70,12 +71,13 @@ with st.spinner('Processing flight Data.....'):
 st.image("https://wallpapers.com/images/hd/sunset-silhouette-airplane-brh2gmlmjhnj74dv.jpg", use_column_width=True)
 st.title("Flight Data Analysis")
 
+#Dataset information
 st.header("Basic Information about the flight dataset")
 Number_of_Flight = df.shape[0]
 year= "2018"
 
 c1,c2,c3= st.columns(3)
-c1.metric("Total Flight code",Number_of_Flight)
+c1.metric("Total Flights",Number_of_Flight)
 c2.metric("Year of Data",year)
 c3.metric('Total Fields', df.shape[1])
 
@@ -101,6 +103,7 @@ with t3:
 
 st.title("Analysis and Visualization Section")
 # Flights Frequency
+#Popular routes
 st.header("Popular Routes")
 df['routes'] = df.Origin+' <-> '+df.Dest
 routes_series = df.routes.apply(update_routes).value_counts()
@@ -109,10 +112,11 @@ routes_series = routes_series.head(size)
 fig = px.bar(routes_series, 
              routes_series.values,
             routes_series.index, title="ROutes", height=500,
-            color_discrete_sequence=['yellowgreen'])
+            color_discrete_sequence=['orange'])
 st.plotly_chart(fig, use_container_width=True,)
 st.write('LGA<->ORD is the most popular route.')
 
+#Flights Arrival and Departure Status
 st.header("Flights Arrival and Departure Status")
 c1, c2 = st.columns(2)
 ArrStatus=df.groupby(['arr_status'])['arr_status'].count()
@@ -122,6 +126,7 @@ DepStatus=df.groupby(['dep_status'])['dep_status'].count()
 fig= px.pie(DepStatus,DepStatus.index, DepStatus.values,title ='Departure status')
 c2.plotly_chart(fig, use_container_width=True)
 
+# Flights frequency across months
 st.header("Flights frequency across months")
 buzMonth = df.groupby(['Month'])['Month'].count()
 flight_freq = df.Month.value_counts()
@@ -130,6 +135,7 @@ fig= px.funnel(flight_freq, flight_freq.index,flight_freq.values,
 st.plotly_chart(fig, use_container_width=True,)
 st.write('Flights frequency is highest in July and lowest in December.')
 
+# Busiest Aircraft in terms of Flights Arrival and Departure
 c1, c2 = st.columns(2)
 c1.subheader('Busiest Aircraft in terms of Flights Arrival')
 origin_series = df.Origin.value_counts()
@@ -145,10 +151,11 @@ size = c2.slider("How many values for destination", min_value=5, max_value=50, s
 dest_series = dest_series.head(size)
 fig = px.bar(dest_series, dest_series.index, 
              dest_series.values, title="Destinations",
-             color_discrete_sequence=['orange'])
+             color_discrete_sequence=['pink'])
 c2.plotly_chart(fig, use_container_width=True,)
 st.write('ORD is the busiest airport with with 25.4% of total flights arrived at this airport and 28.6% of total flights departed from this airport')
 
+# Best and worst carrier w.r.t total flight cancelled
 st.header("Best and worst carrier w.r.t total flight cancelled")
 carriers =  df.loc[df['arr_status'] == 'Cancelled'].groupby(['Carrier'])['arr_status'].count()
 c1,c2 = st.columns([3,7])
@@ -157,6 +164,7 @@ fig = px.pie(carriers, carriers.index, carriers.values, hole=.4, height=500 )
 c2.plotly_chart(fig, use_container_width=True)
 st.write('AA and OH are the best and worst carriers in terms of flight cancellation')
 
+# Best and worst Airport w.r.t total flight cancelled
 st.header("Best and worst Airport w.r.t total flight cancelled")
 bwAir=df.loc[df['arr_status'] == 'Cancelled'].groupby(['Origin'])['arr_status'].count()
 fig= px.line(bwAir,
@@ -166,6 +174,7 @@ fig= px.line(bwAir,
 st.plotly_chart(fig, use_container_width=True)
 st.write('Total flight got canceled at ORD airport is highest among all.')
 
+# Flight cancellation across months
 st.header("Flight cancellation across months")
 MonthCancel=df.loc[df['arr_status'] == 'Cancelled'].groupby(['Month'])['arr_status'].count()
 c1,c2 = st.columns(2)
@@ -181,7 +190,8 @@ fig=px.scatter(MonthCancel,
 c2.plotly_chart(fig, use_container_width=True)
 st.write('Flight cancellation is lowest in September month')
 
-st.header('Best and worst airport in terms of departure and arrival delay')
+# Best and worst airport in terms of departure and arrival delay
+st.header('Best and worst airport in terms of arrival and departure delay')
 arrdelayed = df[df["ArrDelay"] > 0]
 c1,c2 = st.columns(2)
 # Create a pairplot chart
@@ -190,10 +200,10 @@ fig = px.scatter_matrix(
     dimensions=["ArrDelay"],
    )
 c1.plotly_chart(fig, use_container=True)
-depdelayed = df[df["ArrDelay"] > 0]
+depdelayed = df[df["DepDelay"] > 0]
 fig = px.scatter_matrix(
     depdelayed,
-    dimensions=["ArrDelay"],
+    dimensions=["DepDelay"],
    )
 c2.plotly_chart(fig, use_container=True)
 
@@ -206,15 +216,15 @@ fig= px.pie(delayed_flights_by_month,delayed_flights_by_month.index, delayed_fli
 st.plotly_chart(fig, use_container_width=True)
 st.write('Flights delay is more in July month, where as June has minimum flight delays.')
 
-st.header('Average flight speed across all carriers')
 # Flight speed
+st.header('Average flight speed across all carriers')
 df['Speed'] = df['Distance']/(df['ActualElapsedTime']/60)
 # Average flight speed across all carriers
 flightSpeed = df.groupby(['Carrier'])['Speed'].mean()
 fig= px.bar(flightSpeed,flightSpeed.index, flightSpeed.values,
-            color_discrete_sequence=['pink'])
+            color_discrete_sequence=['yellowgreen'])
 st.plotly_chart(fig, use_container_width=True)
 st.write('F9 is best in terms of average flight speed with 362 miles/hr')
 
 st.title('Conclusion:')
-st.subheader('In 2018, around 87% of flight got delayed and most of them were in July, August and September months, where as June and December are the best month to travel. From flight frequency graph we can see that air traffic is more in these 3 months, So this is on the reason flights got delayed in July, August and September months.')
+st.subheader('In 2018, around 87% of flight got delayed and most of them were in July, August and September months, where as June and December are the best month to travel. From flight frequency graph we can see that air traffic is more in these 3 months, So this is the reason flights got delayed in July, August and September months.')
