@@ -1,4 +1,4 @@
-Flight Data Analysis in Pyhton
+# Flight Data Analysis
 
 Project Overview:
 
