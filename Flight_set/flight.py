@@ -138,6 +138,7 @@ st.write('Flights frequency is highest in July and lowest in December.')
 # Busiest Aircraft in terms of Flights Arrival and Departure
 c1, c2 = st.columns(2)
 c1.subheader('Busiest Aircraft in terms of Flights Arrival')
+# Flights Arrival Status
 origin_series = df.Origin.value_counts()
 size = c1.slider("How many values for origin", min_value=5, max_value=50, step=5)
 origin_series = origin_series.head(size)
@@ -145,6 +146,7 @@ fig = px.bar(origin_series, origin_series.index,
              origin_series.values, title="Origin",
              color_discrete_sequence=['purple'])
 c1.plotly_chart(fig, use_container_width=True)
+# Flights Departure Status
 c2.subheader('Busiest airport in terms of Flights departure')
 dest_series = df.Dest.value_counts()
 size = c2.slider("How many values for destination", min_value=5, max_value=50, step=5)
@@ -186,9 +188,10 @@ c1.plotly_chart(fig, use_container_width=True)
 fig=px.scatter(MonthCancel,
              MonthCancel.index,
              MonthCancel.values,
+             title= 'Scatter plot representation'
 )
 c2.plotly_chart(fig, use_container_width=True)
-st.write('Flight cancellation is lowest in September month')
+st.write('Flight cancellation is lowest in September month')                    ##########################
 
 # Best and worst airport in terms of departure and arrival delay
 st.header('Best and worst airport in terms of arrival and departure delay')
